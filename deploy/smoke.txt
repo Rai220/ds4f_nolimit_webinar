@@ -1,0 +1,4 @@
+PASS arithmetic {"prompt_tokens": 18, "total_tokens": 20, "completion_tokens": 2, "prompt_tokens_details": null, "completion_tokens_details": {"reasoning_tokens": 0}} elapsed_s 0.4
+PASS streaming + DONE
+PASS file tool round trip
+PASS all smoke checks

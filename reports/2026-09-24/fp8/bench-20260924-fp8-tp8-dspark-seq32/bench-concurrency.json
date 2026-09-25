@@ -1,0 +1,419 @@
+{
+ "max_tokens": 1024,
+ "prompt": "Напиши подробное эссе об истории вычислительной техники от Бэббиджа до GPU.",
+ "runs": [
+  {
+   "parallel": 8,
+   "wall_s": 7.03,
+   "aggregate_tok_s": 1165.0,
+   "streams": [
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.75,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 155.76
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.95,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 151.17
+    },
+    {
+     "ttft_s": 0.04,
+     "total_s": 6.85,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 150.19
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 7.03,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 149.32
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.91,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 151.99
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.87,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 152.9
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.87,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 152.9
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 6.73,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 156.14
+    }
+   ]
+  },
+  {
+   "parallel": 16,
+   "wall_s": 8.79,
+   "aggregate_tok_s": 1863.78,
+   "streams": [
+    {
+     "ttft_s": 0.05,
+     "total_s": 8.59,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 119.71
+    },
+    {
+     "ttft_s": 0.19,
+     "total_s": 8.57,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 121.97
+    },
+    {
+     "ttft_s": 0.19,
+     "total_s": 8.29,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 126.18
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.56,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 122.21
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.52,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 122.74
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.74,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 119.56
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.65,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 120.82
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.62,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 121.26
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.52,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 122.74
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.6,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 121.46
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.79,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 118.9
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.4,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 124.55
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.6,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 121.46
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.6,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 121.47
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.31,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 125.85
+    },
+    {
+     "ttft_s": 0.18,
+     "total_s": 8.69,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 120.26
+    }
+   ]
+  },
+  {
+   "parallel": 32,
+   "wall_s": 11.49,
+   "aggregate_tok_s": 2852.28,
+   "streams": [
+    {
+     "ttft_s": 0.05,
+     "total_s": 10.83,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.9
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.04,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.01
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.28,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 91.99
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.19,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.78
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.25,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.28
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.02,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.23
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.04,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.01
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 10.93,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.94
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.02,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.22
+    },
+    {
+     "ttft_s": 0.16,
+     "total_s": 11.2,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.61
+    },
+    {
+     "ttft_s": 0.26,
+     "total_s": 11.3,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.69
+    },
+    {
+     "ttft_s": 0.26,
+     "total_s": 11.3,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.7
+    },
+    {
+     "ttft_s": 0.26,
+     "total_s": 11.09,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.43
+    },
+    {
+     "ttft_s": 0.26,
+     "total_s": 11.36,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.17
+    },
+    {
+     "ttft_s": 0.26,
+     "total_s": 11.26,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 93.0
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.09,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 95.44
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.46,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.26
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.26,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 93.95
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.37,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.99
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 10.72,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 98.82
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 10.93,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 96.87
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.37,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.97
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 10.85,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 97.6
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.39,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.78
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 10.98,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 96.38
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.48,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 92.06
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.03,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 95.89
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.03,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 95.9
+    },
+    {
+     "ttft_s": 0.36,
+     "total_s": 11.06,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 95.65
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.22,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.28
+    },
+    {
+     "ttft_s": 0.37,
+     "total_s": 11.11,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 95.21
+    },
+    {
+     "ttft_s": 0.47,
+     "total_s": 11.32,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 94.24
+    }
+   ]
+  }
+ ]
+}

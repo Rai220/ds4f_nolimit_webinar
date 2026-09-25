@@ -1,0 +1,14 @@
+; Replace ALL /ABS/... paths and the unique program name before installation.
+; Do not overwrite a provider's service. run-model.sh must be executable.
+[program:my-model]
+command=/ABS/bundle/ops/run-model.sh /ABS/profile.env
+directory=/ABS/bundle
+autostart=true
+autorestart=unexpected
+redirect_stderr=true
+stdout_logfile=/ABS/data/logs/server.log
+stdout_logfile_maxbytes=50000000
+stdout_logfile_backups=3
+stopasgroup=true
+killasgroup=true
+stopwaitsecs=30

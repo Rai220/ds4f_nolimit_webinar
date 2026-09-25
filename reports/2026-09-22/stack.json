@@ -1,0 +1,44 @@
+{
+  "recorded_at": "2026-09-22",
+  "status": "stopped_and_disk_disconnected_by_owner",
+  "hardware": {
+    "gpu": "2x NVIDIA H200",
+    "vram_per_gpu_mib": 143771,
+    "topology": "NV18",
+    "cpu_arch": "x86_64",
+    "ram_cgroup_bytes": 1038785445888,
+    "disk_overlay_gib": 855
+  },
+  "runtime": {
+    "python": "3.12",
+    "vllm": "0.30.0",
+    "torch": "2.13.0+cu130",
+    "cuda_toolkit": "13.0",
+    "host_driver": "590.48.01",
+    "exllamav3": "1.4.5",
+    "exllamav3_commit": "e648f1a131365aae15920073e761a3fa5a527654",
+    "miaai_commit": "6f7d1590ad49a2b8995188e45d7b9db31e677452"
+  },
+  "serving": {
+    "model_id": "deepseek-v4.1-flash",
+    "tp": 2,
+    "context": 65536,
+    "max_num_seqs": 1,
+    "batch_tokens": 2048,
+    "eager": true,
+    "weight_gib_per_gpu": 95.94,
+    "allocated_mib_per_gpu_last_observation": 131307
+  },
+  "evidence": {
+    "weights": "../../deploy/weights-verified.json",
+    "gpu_kernels": "../../deploy/exl3-kernels.txt",
+    "engram": "../../deploy/engram-dequant.txt",
+    "smoke": "../../deploy/smoke.txt"
+  },
+  "limits": [
+    "No BF16/FP16 deployment tested",
+    "No full 64K context/load benchmark",
+    "Portable installer not replayed on fresh GPU",
+    "Complete pip freeze was not exported before shutdown; disk disconnected, availability is not assumed"
+  ]
+}

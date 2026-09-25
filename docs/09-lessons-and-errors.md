@@ -1,0 +1,80 @@
+# Ошибки и найденные причины
+
+Опыт 2026-09-14, 2026-09-22, 2026-09-23 и 2026-09-25. Для каждого нового инцидента сначала найти **первую** ошибку, затем менять один фактор и повторять проверку. Таблица не является разрешением останавливать чужие процессы или переустанавливать host driver.
+
+| Симптом / ловушка | Причина, выясненная на нашем стенде | Действие и граница применимости |
+|---|---|---|
+| Заказывали B200, доступны H200 | Карточка/шаблон не отражает фактический узел | Проверить GPU через SSH; подобрать arch и runtime заново. Пользователь подтвердил H200 |
+| GPU заняты Qwen/SGLang | Шаблон стартовал свою модель | После разрешённой замены остановить конкретную службу и отключить её autostart. Не `pkill python`, не убивать всё на GPU |
+| SGLang-образ есть, EXL3 не загружается | CUDA-шаблон не означает поддержку формата | Для выбранного EXL3 применён vLLM/ExLlamaV3 overlay; FP8 запускается другим путём |
+| Spark Docker не подходит H200 | ARM64/GB10/двухузловой рецепт и другой toolkit | Native x86_64 venv, нужные native cubins. Не считать `sm_121` универсальным |
+| `ModuleNotFoundError deepseek_v4_1` | В vLLM 0.30 package переименован | Адаптировать import paths к `deepseek_v41` для закреплённой версии |
+| EXL3 отсутствует в quantization registry | Overlay-файл сам не зарегистрировал формат | Зарегистрировать Literal/config factory и ModelConfig override; проверить фактический loader |
+| Несовпадение packed names/lm_head/wo_a/indexer | Стандартный loader предполагает другой layout | Применить соответствующие pinned patches, проверить отсутствие missing/unexpected weights. Не «лечить» через ignore |
+| Engram init отвергает `dp_shared_memory` | Новый API класса | Добавить аргумент, поддержать только false; shared-DP этот адаптер не реализует |
+| Нет `engram_head_shard_rank` | Функция находится в NVIDIA-модуле, не common | Явный импорт из NVIDIA-модуля |
+| Patch common Engram есть, offload всё ещё неверный | NVIDIA subclass имеет свой путь реализации | Подключить backend и к фактически используемому subclass, проверить log layer/rank/cache |
+| `No module named dsv41_engram_file_backend` | importlib alias не зарегистрирован как импортируемый модуль | Для NVIDIA footer использовать `from engram_file_backend import install`, добавить overlay в PYTHONPATH |
+| `librow_store.so` / `libcudart.so` not found | Не собран native backend или другой toolkit path | Собрать C++ библиотеку, проверить CUDA_HOME/runtime library search. Не переносить бинарник между CPU arch |
+| `Tried: <none>` при поиске `libcudart`, хотя файл есть | Engram смотрит только `$CUDA_HOME/lib64`. Пользовательский CUDA-префикс кладёт библиотеку в `lib/` | Ссылка `lib64` → `lib`, либо поиск в обоих каталогах. Установщик и адаптер Engram это делают |
+| Сборка ExLlama: нет `cuda.h` / `cusparse.h` | У conda-toolkit заголовки в `targets/x86_64-linux/include`, а `g++` получает только `$CUDA_HOME/include` | Дополнить `CPATH` и поставить dev-пакеты cublas/cusparse/cusolver/curand той же ветки, что `nvcc` |
+| Engram не находится / модель неполная | 210,6 GB EXL3 не включает 203,1 GB таблиц | Скачать строго совместимые shards 47/48 + config/index из pinned базового snapshot |
+| CPU RAM неожиданно заполнена | Host-visible RAM не равна cgroup; default pinned copies могут быть огромны | Проверить лимит, layout/offload. File-backed row cache на EXL3 отличается от private host table на SGLang |
+| Неверно посчитали DSV41_CACHE_GIB | Значение 8 — общий бюджет, делится по слоям/ranks | На 2 ranks × 2 слоя получилось по 2 GiB. Не обещать тот же расход на другой topology |
+| CUDA 401 при NCCL initialization | NVLS multicast binding недоступен в этом контейнере | `NCCL_NVLS_ENABLE=0` устранил ошибку; P2P/IPC остался. Не отключать NVLink целиком |
+| Долгая compilation `trtllm_allreduce_fusion` | Необязательный FlashInfer all-reduce запускал JIT | В baseline отключены FlashInfer/symmetric/custom all-reduce, используется PYNCCL. Оптимизировать отдельно |
+| Обе GPU 100%, mixed warmup не завершается | Одновременные EXL3-проекции делят lock buffer и deadlock | Авторское исправление: `aux_stream_list=None` в реальном NVIDIA model. `DSV41_EXL3_SERIAL_STREAMS=1` без patch недостаточно |
+| `No available shared memory broadcast block` каждые 60 с | Engine ждёт workers; это следствие, не первопричина | Посмотреть worker stacks и JIT/ошибки. Не увеличивать shm вслепую |
+| `py-spy dump` получает Permission denied от root | Ограничения ptrace контейнера | При контролируемом restart временно включить faulthandler. Удалить диагностику после решения; не менять kernel policy |
+| Стек застрял в Triton load_binary | Асинхронный GPU deadlock проявился при загрузке следующего kernel | Проверять уже запущенные CUDA streams/EXL3 locks; место Python stack не всегда первопричина |
+| Первый prefill сильно медленнее следующих | JIT по новым shapes и прогрев caches | Дать запросу завершиться, сохранить cold/warm отдельно. Сотни простых poll-запросов прогрев не заменяют |
+| CUDA OOM | Веса + KV + scratch/graphs + параллельность | Сначала снизить concurrent requests, graph budget, batch/prefill; потом context/memory fraction. Не искать решение в `free -h` CPU |
+| Exit 137 | SIGKILL: возможен OOM, но не только | Проверить OOMKilled/cgroup/events/доступные журналы, не объявлять причину по exit code |
+| `ninja`, `crt/host_config.h`, libnvvm missing | Неполный toolkit/build deps | На прежнем source route ставили toolkit components отдельно. Host driver не переустанавливать в контейнере |
+| CUDA версия выглядит «не той» | Driver advertised, toolkit и Torch wheel — три разных значения | Снять все три; реальная матрица/kernel execution важнее одного номера |
+| 8080 занят | На Vast это Jupyter | Выбрать loopback API 18080, перенаправлять local 8080 → remote 18080 |
+| SSH proxy закрывает соединения | На Vast прокси иногда рвёт долгие сессии | Взять direct SSH из фактической карты портов, сверить host key. Порт этой аренды на новый узел не переносить |
+| curl `/health` 200, клиент не работает | Health не проверяет generation/parser/context | Прогнать completed generation, SSE, tool round trip и сам клиент |
+| `finish_reason=length`, пустой content | Reasoning мог израсходовать бюджет | Проверить отдельное reasoning-поле, завершение, лимиты. Для простого smoke отключить thinking только если template поддерживает |
+| Free-code HTTP400 про reasoning_effort | Значение `medium` не принимается DeepSeek V4.1 | В проверенном профиле `high`; модель допускает low/high/xhigh/max, не переносить правило на любую другую модель |
+| Free-code быстро переполняет 8K | System prompt + tools + история занимают контекст | Согласованно увеличить сервер и клиент. На H200 хватало 65536. Служебный промпт free-code около 28k токенов: вместе с ответом 4096 это уже больше 32768 |
+| TP=4 на EXL3 падает `unpacked N dimension must be divisible by 128` | Эксперты (shared и routed) шириной 2304. Доля на 4 ранга — 576, она не кратна 128 | TP 2, а больше карт — через `--data-parallel-size` + `--enable-expert-parallel` и `deploy/patch-fast-path.py`. Не заменять это pipeline parallel: загрузчик стадии 1 ищет `layers.0.attn.wo_a.mul1` и падает KeyError |
+| TP=2 не входит в H100 80GB | Веса на две карты около 96 ГиБ на карту | На 4×H100 — TP=2 × DP=2 + EP, 50,5 ГиБ на карту. На 2×H100 — `--cpu-offload-gb 32`: 9,6 токенов/с в eager |
+| Один поток 9–11 токенов/с, один воркер 100% CPU, его GPU около 35% | Eager-режим: время уходит на запуск мелких ядер из Python, остальные карты ждут в NCCL | CUDA graphs (`EAGER=0`) → 35,5, DSpark k=3 → 58 токенов/с на 4×H100. Сначала baseline smoke, затем по шагу. [docs/13](13-speed.md) |
+| Захват графов: `GPU assert: operation not permitted when stream is capturing ... coop_autotune.cu 464` | Автотюнер ExLlamaV3 видит новую форму GEMM внутри захвата. Прогрев форм у автора kit в `patch_memory_log.py`, installer его не применял. Захват начинается уже в `determine_available_memory` | `deploy/patch-fast-path.py` (`[dsv41-exl3-pretune]`) прогревает все формы до него. Нужен на любом железе, где включены графы |
+| EP: `EXL3 load shape mismatch ... w13_svh dest (2304,) != loaded (1152,)` | Загрузчик EXL3 резал экспертов по TP внимания, а при EP у MoE-группы TP=1 | `[dsv41-exl3-ep]`: брать `self.moe.tp_rank/tp_size`. Для схемы без EP значения прежние |
+| EP: `property 'expert_map' of 'RoutedExperts' object has no setter` | В vLLM 0.30 `expert_map` — read-only property | `[dsv41-exl3-ep-map]`: закреплённая копия в отдельном атрибуте |
+| DP: `illegal memory access` на пустом шаге (`execute_dummy_batch`) простаивающей реплики | При naive DP dispatch hidden states собраны со всех реплик, а `input_ids` локальные; `dsv4_topk` читает за границей. Traceback без `CUDA_LAUNCH_BLOCKING=1` указывал на ядро EXL3 | `[dsv41-dp-input-ids]`: собирать `input_ids` тем же `all_gatherv`. Пока падения нет, vision-маршрутизация неверна молча |
+| DSpark + DP: `topk_softplus_sqrt ... is_padding size mismatch, expected: 8` | Маска padding из forward context локальная, строк у чернового хэш-роутера в DP раз больше | `VLLM_MOE_SKIP_PADDING=0` в профиле: padding считается и отбрасывается |
+| Новый запуск падает сразу, на картах 0 и 1 уже по 60 ГиБ | Упавший старт оставил API-сервер и часть воркеров | Перед запуском проверять процессы и VRAM = 0; останавливать свои PID по одному |
+| FP8 на штатном vLLM падает сразу после загрузки весов: DeepGEMM JIT, `cuda_toolkit.h: CUDA compiler and CUDA toolkit headers are incompatible` (2026-09-24) | `CUDA_HOME` указывал на `nvidia/cu13` внутри venv. Там `nvcc` 13.4.92 (его тянет зависимость без pin) и заголовки runtime 13.0; CCCL требует, чтобы версия nvcc совпадала с `CUDART_VERSION` | Отдельный согласованный toolkit 13.0: [install-cuda-toolkit.sh](../skills/ds4-fp8-vllm/scripts/install-cuda-toolkit.sh), `CUDA_HOME=$ROOT/cuda13/nvidia/cu13`. Не отключать проверку `CCCL_DISABLE_CTK_COMPATIBILITY_CHECK` |
+| Следующий старт: FlashInfer `Ninja build failed`, `curand.h: No such file` на прогревочном sampling (2026-09-24) | Минимальный pip-toolkit `cuda-toolkit[nvcc,cccl]` без curand; FlashInfer ещё и линкует `-L$CUDA_HOME/lib64 -lcudart`, а в wheel только `lib/libcudart.so.13` | Тот же скрипт: extras `curand,cublas`, ссылки `lib64` → `lib` и `libcudart.so`, тест компиляции и линковки до старта |
+| JIT-модуль FlashInfer пересобирается в `~/.cache/flashinfer` с чужими путями | На ноутбуках Cloud.ru один NFS-home на несколько узлов namespace; FlashInfer, Triton, TileLang и драйвер по умолчанию кэшируют в `$HOME` | В профиле `FLASHINFER_WORKSPACE_BASE`, `TRITON_CACHE_DIR`, `TILELANG_CACHE_DIR`, `CUDA_CACHE_PATH` на локальный `$ROOT/cache` |
+| Свежий venv со штатным vLLM: `No module named 'engram_file_backend'` | uv поставил файлы жёсткими ссылками на кэш, а EXL3-установщик правил их на месте: одинаковые inode в кэше, EXL3-venv и новом venv | В installer `UV_LINK_MODE=copy`. Для уже испорченного кэша: `--no-cache --link-mode copy --reinstall-package vllm`. Проверять `stat -c %h` у патчимых файлов |
+| `kill $PIDS` не убил ничего, `SigPnd` пустой | Оболочка входа ноутбука Cloud.ru — zsh, `$VAR` не разбивается на слова | `for p in $(…); do kill $p; done`. Там же `echo =====` обрывает строку, а `pkill -f` совпадает с командой своей SSH-сессии |
+| `max_model_len` 1048576 отвергнут, оценка около 600960 | При `gpu-memory-utilization` 0.90 на KV осталось около 1,1 ГиБ | Поднять долю до 0.95. Тогда то же окно, равное `max_position_embeddings`, стартует: кэш около 5 ГиБ |
+| `ssh -L` через шлюз Jupyter отвечает `target host connection failed` | Шлюз принимает канал сам и не доставляет его в ноутбук | Локальный слушатель и SSH-команда с мостом stdin/stdout на порт API. Не отключать проверку host key |
+| free-code от root: `--dangerously-skip-permissions` запрещён | Проверка `getuid()==0`, если нет `IS_SANDBOX=1` | Для неинтерактивного прогона задать `IS_SANDBOX=1`. На обычного пользователя это не переносить |
+| `install.sh` free-code меняет чужие настройки | Он берёт незакреплённый `master`, делает `ln -sf` на `~/.local/bin/free-code` и через `configure-defaults.ts` правит `~/.claude/settings.json` | Собирать вручную на закреплённом commit ([скил](../skills/free-code-deepseek/SKILL.md), шаг 1); настройки вернуть из `settings.json.bak-*` |
+| Нужен alias для `--yolo` | В сборках до `a89531f` (например 2.1.119) был только `--dangerously-skip-permissions` | С `2.1.251-free-code.1` `--yolo` встроен; пересобрать, alias не заводить. Команда `free-code` — symlink на launcher, он передаёт `"$@"` |
+| `-p` ждёт 3 с и пишет `no stdin data received` | Headless-режим читает stdin | Добавлять `< /dev/null` |
+| Без `--yolo` модель долго обходит отказ | Проверено 2026-09-25: DeepSeek V4.1 после отказа в записи 60 ходов пробовал `cp`, `tee`, `dd`, другие пути; попутно записал заметки в auto-memory профиля | Отрицательную проверку ограничивать `--max-turns`, ставить `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`, запускать в отдельном каталоге |
+| `CLAUDE_CODE_USE_OPENAI=1` ведёт не туда | В этом fork это Codex OAuth | Для vLLM/SGLang использовать native Anthropic Messages и ANTHROPIC_BASE_URL без `/v1` |
+| В UI остался Qwen | UI захватывает model ID и HTML/JS при старте | Обновить backend env после environment loader и перезапустить только model-ui; обновить браузер |
+| Reasoning в Model UI не виден | UI ожидал `reasoning_content`, vLLM отправляет `reasoning` | Поддержать оба поля в SSE renderer; проверить выдаваемый JS |
+| Внешний UI HTTP401 | Caddy token auth работает | Открыть Launch Application / Secure Tunnel Link с штатной авторизацией. Не отключать auth |
+| Из контейнера mapped external port Connection refused | В этом тесте не работал заход на собственный внешний адрес | Отдельно проверить local Caddy port, endpoint с ноутбука и Quick Tunnel. Это не доказывает недоступность снаружи |
+| Quick Tunnel URL поменялся | Временный tunnel провайдера | Брать актуальную ссылку из панели; для постоянного адреса — отдельная конфигурация домена/аутентификации |
+| После recycle пропали веса | Overlay не persistent volume | Проверить policy заранее; сохранять manifest/scripts вне аренды, переносить/подключать устойчивый том |
+| Неожиданные `.free-code-logs` / S3 сообщения | Сборка ведёт свои API-логи | Для профиля выставлены FREE_CODE_LOGS_DISABLED=1 и FREE_CODE_LOGS_S3_DISABLED=1; transcript history управляется отдельно |
+| shell-скрипт работает вручную, сервис нет | Иные PATH/env/cwd/права | Абсолютные пути, явный profile, экспорт переменных, тот же пользователь. Проверить реальную service command |
+
+## Как разбирать зависание, не разрушая стенд
+
+Сохранить хвост журнала, PID/PGID конкретного сервиса, GPU utilization/memory и начало ошибки. Если workers ещё компилируют и прогресс идёт, не перезапускать. Если deadlock подтверждён, остановить службу через её менеджер. При неудаче graceful stop менеджер должен добить **его** process group по timeout; ручной SIGKILL применять только к проверенной группе этого сервиса. На стенде так завершали зависший собственный EXL3; неизвестные процессы не трогали.
+
+Не прятать несовместимость через broad exception, отключение Engram или missing-weight checks. Генерация «какого-то текста» после отключения части модели не является корректным развёртыванием выбранного checkpoint.
+
+## Что намеренно не объявляется решённым
+
+BF16/FP16 развёртывание, B200/GB10 перенос этого runtime, заполнение всего окна 1048576 одним запросом, vision и законченный agent coding benchmark. Скорость и конкурентность измерены только на 4×H100 2026-09-23 одной нагрузкой ([docs/13](13-speed.md)): 58 токенов/с в один поток с графами и DSpark, 254 в сумме при 8 запросах. Temperature 1.0, длинный контекст и клиенты на быстром профиле не мерились; графы и DSpark на H200 не проверены. Синтетические kernel parity-тесты, короткий API smoke и чтение файла дают более узкие гарантии.

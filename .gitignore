@@ -1,0 +1,17 @@
+# Machine-specific profiles, logs, caches and generated bundles.
+.local/
+.env
+.env.*
+!.env.example
+*.local.env
+*.log
+*.pyc
+__pycache__/
+.venv/
+venv/
+model/
+engram/
+cache/
+dist/
+.free-code-logs/
+.DS_Store

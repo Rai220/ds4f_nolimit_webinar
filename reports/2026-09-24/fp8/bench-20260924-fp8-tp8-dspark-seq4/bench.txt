@@ -1,0 +1,3 @@
+parallel=1 max_tokens=1024 prompt_tokens=54 wall=5.1s aggregate=200.6 tok/s per-stream 204.7-204.7 tok/s ttft<=0.11s
+parallel=1 max_tokens=1024 prompt_tokens=54 wall=5.0s aggregate=204.2 tok/s per-stream 208.6-208.6 tok/s ttft<=0.11s
+parallel=4 max_tokens=1024 prompt_tokens=54 wall=5.9s aggregate=695.7 tok/s per-stream 177.5-187.6 tok/s ttft<=0.12s

@@ -1,0 +1,70 @@
+{
+  "workdir": "<scratch>/replay/work",
+  "checks": [
+    {
+      "name": "api /v1/models",
+      "ok": true,
+      "ids": [
+        "deepseek-v4.1-flash"
+      ]
+    },
+    {
+      "name": "--yolo is a built-in flag",
+      "ok": true,
+      "version": "2.1.251-free-code.1 (Claude Code)"
+    },
+    {
+      "name": "read round trip (default mode)",
+      "ok": true,
+      "rc": 0,
+      "model": "deepseek-v4.1-flash",
+      "permission_mode": "default",
+      "version": "2.1.251-free-code.1",
+      "tools": [
+        "Read"
+      ],
+      "is_error": false,
+      "subtype": "success",
+      "turns": 2,
+      "denials": [],
+      "result": "Contents of check.txt:\n\n```\nWEBINAR-CHECK-73921\n```"
+    },
+    {
+      "name": "--yolo bash round trip",
+      "ok": true,
+      "rc": 0,
+      "file_created": true,
+      "model": "deepseek-v4.1-flash",
+      "permission_mode": "bypassPermissions",
+      "version": "2.1.251-free-code.1",
+      "tools": [
+        "Bash"
+      ],
+      "is_error": false,
+      "subtype": "success",
+      "turns": 2,
+      "denials": [],
+      "result": "WEBINAR-CHECK-73921"
+    },
+    {
+      "name": "without --yolo the write is refused",
+      "ok": true,
+      "rc": 0,
+      "model": "deepseek-v4.1-flash",
+      "permission_mode": "default",
+      "version": "2.1.251-free-code.1",
+      "tools": [
+        "Bash"
+      ],
+      "is_error": false,
+      "subtype": "success",
+      "turns": 2,
+      "denials": [
+        "Bash"
+      ],
+      "result": "It ran, but the shell printed a warning: output redirection to `made-default.txt` was blocked, so `cat made-default.txt` printed nothing. Want me to re-run (e.g. with the sandbox disabled) to actually produce the file?"
+    }
+  ],
+  "version": "2.1.251-free-code.1 (Claude Code)",
+  "ok": true
+}

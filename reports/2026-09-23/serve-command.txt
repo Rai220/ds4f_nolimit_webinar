@@ -1,0 +1,22 @@
+/var/tmp/ds41-exl3/venv/bin/python -m vllm.entrypoints.openai.api_server --model /var/tmp/ds41-exl3/model --served-model-name deepseek-v4.1-flash --host 127.0.0.1 --port 18080 --tensor-parallel-size 2 --max-model-len 1048576 --max-num-seqs 4 --max-num-batched-tokens 2048 --gpu-memory-utilization 0.90 --quantization exl3 --tokenizer-mode deepseek_v41 --hf-overrides {"engram_table_dir": "/var/tmp/ds41-exl3/engram"} --tool-call-parser deepseek_v41 --enable-auto-tool-choice --reasoning-parser deepseek_v41 --trust-remote-code --disable-custom-all-reduce --data-parallel-size 2 --enable-expert-parallel --cudagraph-capture-sizes 1 2 3 4 6 8 12 18 24 --speculative-config {"method":"dspark","num_speculative_tokens":3} 
+
+# Environment from the profile chain server.env -> server-dp2ep -> -graphs -> -graphs-dspark -> -seq4
+# (paths are this node's local overlay; no secrets in the profile)
+PYTHONPATH=/var/tmp/ds41-exl3/overlay
+CUDA_HOME=/var/tmp/cuda13   # conda cuda-nvcc 13.3; serve.sh also sets LD_LIBRARY_PATH/LIBRARY_PATH/CPATH to $CUDA_HOME/targets/x86_64-linux/{lib,include}
+VLLM_NO_USAGE_STATS=1
+DSV41_EXL3_SERIAL_STREAMS=1
+VLLM_DISABLE_SHARED_EXPERTS_STREAM=1
+EXL3_FAT_GROUPED=0
+DSV41_CACHE_GIB=16
+DSV41_IO_THREADS=16
+NCCL_NVLS_ENABLE=0
+VLLM_ALLREDUCE_USE_FLASHINFER=0
+VLLM_ALLREDUCE_USE_SYMM_MEM=0
+VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256
+VLLM_MOE_SKIP_PADDING=0
+TORCH_CUDA_ARCH_LIST=9.0a
+
+# Versions: vLLM 0.30.0, torch 2.13.0+cu130, exllamav3 e648f1a131365aae15920073e761a3fa5a527654,
+# MiaAI kit 6f7d1590ad49a2b8995188e45d7b9db31e677452, NVIDIA driver 570.133.20, nvcc 13.3 (V13.3.73).
+# Patches: deploy/patch-fast-path.py (byte-identical to the files served here).

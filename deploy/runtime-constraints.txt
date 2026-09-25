@@ -1,0 +1,7 @@
+# Known main versions from the working host; NOT a full dependency lock.
+# Archive pip-freeze.txt after the next successful clean GPU rehearsal.
+vllm==0.30.0
+torch==2.13.0
+flash-linear-attention==0.5.2
+fla-core==0.5.2
+marisa-trie==1.4.1

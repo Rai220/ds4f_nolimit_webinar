@@ -1,0 +1,35 @@
+[
+ {
+  "target_tokens": 131072,
+  "prompt_tokens": 130081,
+  "depth": 0.5,
+  "found": true,
+  "prefill_s": 12.6,
+  "prefill_tok_s": 10310,
+  "total_s": 12.8,
+  "completion_tokens": 54,
+  "answer": "PXC8-MK3E"
+ },
+ {
+  "target_tokens": 524288,
+  "prompt_tokens": 520991,
+  "depth": 0.5,
+  "found": true,
+  "prefill_s": 68.7,
+  "prefill_tok_s": 7581,
+  "total_s": 68.7,
+  "completion_tokens": 44,
+  "answer": "5P1F-MCM4"
+ },
+ {
+  "target_tokens": 1040000,
+  "prompt_tokens": 1033152,
+  "depth": 0.5,
+  "found": true,
+  "prefill_s": 252.8,
+  "prefill_tok_s": 4086,
+  "total_s": 253.4,
+  "completion_tokens": 173,
+  "answer": "4DAD-W9VP"
+ }
+]

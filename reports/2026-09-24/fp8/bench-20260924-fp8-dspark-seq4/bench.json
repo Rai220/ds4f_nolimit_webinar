@@ -1,0 +1,69 @@
+{
+ "max_tokens": 1024,
+ "prompt": "Напиши подробное эссе об истории вычислительной техники от Бэббиджа до GPU.",
+ "runs": [
+  {
+   "parallel": 1,
+   "wall_s": 5.11,
+   "aggregate_tok_s": 200.36,
+   "streams": [
+    {
+     "ttft_s": 0.1,
+     "total_s": 5.11,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 204.31
+    }
+   ]
+  },
+  {
+   "parallel": 1,
+   "wall_s": 5.26,
+   "aggregate_tok_s": 194.85,
+   "streams": [
+    {
+     "ttft_s": 0.11,
+     "total_s": 5.25,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 198.85
+    }
+   ]
+  },
+  {
+   "parallel": 4,
+   "wall_s": 6.38,
+   "aggregate_tok_s": 641.54,
+   "streams": [
+    {
+     "ttft_s": 0.11,
+     "total_s": 6.38,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 162.93
+    },
+    {
+     "ttft_s": 0.22,
+     "total_s": 6.19,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 171.18
+    },
+    {
+     "ttft_s": 0.22,
+     "total_s": 6.29,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 168.42
+    },
+    {
+     "ttft_s": 0.22,
+     "total_s": 6.17,
+     "prompt_tokens": 54,
+     "completion_tokens": 1024,
+     "decode_tok_s": 171.99
+    }
+   ]
+  }
+ ]
+}
